@@ -1,25 +1,8 @@
-from flask import Flask
-import threading
 import discord
 from discord.ext import commands
 import os
 from dotenv import load_dotenv
-
-# ---------- KEEP ALIVE WEB SERVER ----------
-app = Flask(__name__)
-
-@app.route("/")
-def home():
-    return "✅ Bot is running!"
-
-def run_web():
-    app.run(host="0.0.0.0", port=8080)
-
-def keep_alive():
-    t = threading.Thread(target=run_web)
-    t.start()
-
-keep_alive()
+import traceback
 
 # ---------- LOAD TOKEN ----------
 load_dotenv()
@@ -42,6 +25,12 @@ bot.remove_command('help')
 async def on_ready():
     print(f"✅ Logged in as {bot.user}")
     await bot.tree.sync()
+
+# ---------- BASIC ERROR LOGGER ----------
+@bot.event
+async def on_error(event, *args, **kwargs):
+    print(f"⚠️ An error occurred in event: {event}")
+    traceback.print_exc()
 
 # ---------- CHANNEL WELCOME EMBED ----------
 @bot.event
