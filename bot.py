@@ -113,7 +113,7 @@ async def paygojo(interaction: discord.Interaction):
     embed.add_field(name=":large_orange_diamond: Binance ID", value="962123136", inline=False)
     embed.add_field(name=":mobile_phone: Nagad Number", value="01742208442", inline=False)
     embed.add_field(name=":mobile_phone: Bkash Number", value="01742208442", inline=False)
-    embed.add_field(name=":link: LTC Address", value="LVo4KawK8EUJS8o42MFCfcL2VwjK671UYt", inline=False)
+    embed.add_field(name=":link: LTC Address", value="LPaKyThv5EkZQvy6wEL3ynaJ48g7edvydH", inline=False)
     await interaction.followup.send(embed=embed)
 
 @bot.tree.command(name='view_account', description=':bust_in_silhouette: Check your verification status')
