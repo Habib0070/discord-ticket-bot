@@ -59,8 +59,8 @@ async def on_guild_channel_create(channel: discord.TextChannel):
                     f"Here are some commands you can use:\n"
                     f"- :clipboard: `/myhelp`: Displays the list of available commands.\n"
                     f"- :credit_card: `/payment_method`: View available payment methods.\n"
-                    f"- :moneybag: `/pay_C4Lypso`: Get payment details for Admin C4Lypso.\n"
-                    f"- :moneybag: `/pay_gojo`: Get payment details for Admin GOJO.\n\n"
+                    f"- :moneybag: `/payc4lypso`: Get payment details for Admin C4Lypso.\n"
+                    f"- :moneybag: `/paygojo`: Get payment details for Admin GOJO.\n\n"
                     "Feel free to use any of the commands to get more information or navigate our support!"
                 ),
                 color=discord.Color.blue()
@@ -75,8 +75,8 @@ async def myhelp(interaction: discord.Interaction):
     embed.add_field(name=":lock: `/auth`", value="Verify your identity in the server.", inline=False)
     embed.add_field(name=":bust_in_silhouette: `/view_account`", value="Check your verification status.", inline=False)
     embed.add_field(name=":credit_card: `/payment_method`", value="View available payment methods.", inline=False)
-    embed.add_field(name=":moneybag: `/pay_C4Lypso`", value="Get payment details for Admin C4Lypso.", inline=False)
-    embed.add_field(name=":moneybag: `/pay_gojo`", value="Get payment details for Admin GOJO.", inline=False)
+    embed.add_field(name=":moneybag: `/payc4lypso`", value="Get payment details for Admin C4Lypso.", inline=False)
+    embed.add_field(name=":moneybag: `/paygojo`", value="Get payment details for Admin GOJO.", inline=False)
     embed.set_footer(text="Use these commands to interact with the bot.")
     await interaction.followup.send(embed=embed)
 
@@ -90,8 +90,8 @@ async def payment_method(interaction: discord.Interaction):
     embed.add_field(name=":link: LTC", value="Litecoin address for payments: `LVo4KawK8EUJS8o42MFCfcL2VwjK671UYt`", inline=False)
     await interaction.followup.send(embed=embed)
 
-@bot.tree.command(name='pay_C4Lypso', description=':moneybag: View payment details for Admin C4Lypso')
-async def pay_C4Lypso(interaction: discord.Interaction):
+@bot.tree.command(name='payc4lypso', description=':moneybag: View payment details for Admin C4Lypso')
+async def payc4lypso(interaction: discord.Interaction):
     await interaction.response.defer()
     embed = discord.Embed(title=":moneybag: Payment Details - Admin C4Lypso", color=discord.Color.gold())
     embed.add_field(name=":large_orange_diamond: Binance ID", value="947740594", inline=False)
@@ -99,8 +99,8 @@ async def pay_C4Lypso(interaction: discord.Interaction):
     embed.add_field(name=":mobile_phone: Bkash Number", value="01795-395747", inline=False)
     await interaction.followup.send(embed=embed)
 
-@bot.tree.command(name='pay_gojo', description=':moneybag: View payment details for Admin GOJO')
-async def pay_gojo(interaction: discord.Interaction):
+@bot.tree.command(name='paygojo', description=':moneybag: View payment details for Admin GOJO')
+async def paygojo(interaction: discord.Interaction):
     await interaction.response.defer()
     embed = discord.Embed(title=":moneybag: Payment Details - Admin GOJO", color=discord.Color.gold())
     embed.add_field(name=":large_orange_diamond: Binance ID", value="962123136", inline=False)
