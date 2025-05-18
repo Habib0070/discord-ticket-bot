@@ -94,7 +94,7 @@ async def payment_method(interaction: discord.Interaction):
     embed.add_field(name=":large_orange_diamond: Binance", value="Secure cryptocurrency exchange.", inline=False)
     embed.add_field(name=":mobile_phone: Nagad", value="Mobile financial service for easy transactions.", inline=False)
     embed.add_field(name=":mobile_phone: Bkash", value="Convenient payment option via mobile.", inline=False)
-    embed.add_field(name=":link: LTC", value="Litecoin address for payments: `LVo4KawK8EUJS8o42MFCfcL2VwjK671UYt`", inline=False)
+    embed.add_field(name=":link: LTC", value="Litecoin address for payments: `LPaKyThv5EkZQvy6wEL3ynaJ48g7edvydH`", inline=False)
     await interaction.followup.send(embed=embed)
 
 @bot.tree.command(name='payc4lypso', description=':moneybag: View payment details for Admin C4Lypso')
