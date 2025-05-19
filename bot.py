@@ -68,7 +68,7 @@ async def on_guild_channel_create(channel: discord.TextChannel):
                     f"- :credit_card: `/payment_method`: View available payment methods.\n"
                     f"- :moneybag: `/payc4lypso`: Get payment details for Admin C4Lypso.\n"
                     f"- :moneybag: `/paygojo`: Get payment details for Admin GOJO.\n\n"
-                    "Feel free to use any of the commands to get more information or navigate our support!"
+                    "Feel free to use any of the commands to get more information or navigate our support! Thank you for shopping with us!"
                 ),
                 color=discord.Color.blue()
             )
