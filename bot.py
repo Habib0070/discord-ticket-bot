@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import cooldown, BucketType
 from discord.errors import HTTPException, Forbidden, DiscordServerError
+import asyncio
 import os
 from dotenv import load_dotenv
 import traceback
@@ -82,7 +83,21 @@ async def on_guild_channel_create(channel: discord.TextChannel):
                 ),
                 color=discord.Color.blue()
             )
-            await channel.send(embed=embed)
+            try:
+                await asyncio.wait_for(channel.send(embed=embed), timeout=10)
+            except asyncio.TimeoutError:
+                print("Timeout sending welcome embed, skipping.")
+            except Exception as e:
+                print(f"Error sending welcome embed: {e}")
+
+# ---------- UTILITY FUNCTION TO SEND WITH TIMEOUT ----------
+async def safe_followup_send(interaction, **kwargs):
+    try:
+        await asyncio.wait_for(interaction.followup.send(**kwargs), timeout=10)
+    except asyncio.TimeoutError:
+        print("Timeout sending followup message, skipping.")
+    except Exception as e:
+        print(f"Error sending followup message: {e}")
 
 # ---------- SLASH COMMANDS ----------
 
@@ -97,7 +112,7 @@ async def myhelp(interaction: discord.Interaction):
     embed.add_field(name=":moneybag: `/payc4lypso`", value="Get payment details for Admin C4Lypso.", inline=False)
     embed.add_field(name=":moneybag: `/paygojo`", value="Get payment details for Admin GOJO.", inline=False)
     embed.set_footer(text="Use these commands to interact with the bot.")
-    await interaction.followup.send(embed=embed)
+    await safe_followup_send(interaction, embed=embed)
 
 @bot.tree.command(name='payment_method', description=':credit_card: View available payment methods')
 @cooldown(rate=1, per=10, type=BucketType.user)
@@ -108,7 +123,7 @@ async def payment_method(interaction: discord.Interaction):
     embed.add_field(name=":mobile_phone: Nagad", value="Mobile financial service for easy transactions.", inline=False)
     embed.add_field(name=":mobile_phone: Bkash", value="Convenient payment option via mobile.", inline=False)
     embed.add_field(name=":link: LTC", value="Litecoin address for payments: `LVo4KawK8EUJS8o42MFCfcL2VwjK671UYt`", inline=False)
-    await interaction.followup.send(embed=embed)
+    await safe_followup_send(interaction, embed=embed)
 
 @bot.tree.command(name='payc4lypso', description=':moneybag: View payment details for Admin C4Lypso')
 @cooldown(rate=1, per=10, type=BucketType.user)
@@ -118,7 +133,7 @@ async def payc4lypso(interaction: discord.Interaction):
     embed.add_field(name=":large_orange_diamond: Binance ID", value="947740594", inline=False)
     embed.add_field(name=":mobile_phone: Nagad Number", value="01795-395747", inline=False)
     embed.add_field(name=":mobile_phone: Bkash Number", value="01795-395747", inline=False)
-    await interaction.followup.send(embed=embed)
+    await safe_followup_send(interaction, embed=embed)
 
 @bot.tree.command(name='paygojo', description=':moneybag: View payment details for Admin GOJO')
 @cooldown(rate=1, per=10, type=BucketType.user)
@@ -129,20 +144,20 @@ async def paygojo(interaction: discord.Interaction):
     embed.add_field(name=":mobile_phone: Nagad Number", value="01742208442", inline=False)
     embed.add_field(name=":mobile_phone: Bkash Number", value="01742208442", inline=False)
     embed.add_field(name=":link: LTC Address", value="LPaKyThv5EkZQvy6wEL3ynaJ48g7edvydH", inline=False)
-    await interaction.followup.send(embed=embed)
+    await safe_followup_send(interaction, embed=embed)
 
 @bot.tree.command(name='view_account', description=':bust_in_silhouette: Check your verification status')
 @cooldown(rate=1, per=10, type=BucketType.user)
 async def view_account(interaction: discord.Interaction):
     await interaction.response.defer()
-    await interaction.followup.send(f":white_check_mark: **{interaction.user.name}** is verified!")
+    await safe_followup_send(interaction, content=f":white_check_mark: **{interaction.user.name}** is verified!")
 
 @bot.tree.command(name='refresh_commands', description=':arrows_counterclockwise: Refresh bot commands')
 @cooldown(rate=1, per=10, type=BucketType.user)
 async def refresh_commands(interaction: discord.Interaction):
     await interaction.response.defer()
     await bot.tree.sync()
-    await interaction.followup.send(":white_check_mark: Slash commands have been refreshed!", ephemeral=True)
+    await safe_followup_send(interaction, content=":white_check_mark: Slash commands have been refreshed!", ephemeral=True)
 
 # ---------- START BOT ----------
 bot.run(TOKEN)
