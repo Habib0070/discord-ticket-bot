@@ -2,6 +2,8 @@ from flask import Flask
 import threading
 import discord
 from discord.ext import commands
+from discord.ext.commands import cooldown, BucketType
+from discord.errors import HTTPException, Forbidden, DiscordServerError
 import os
 from dotenv import load_dotenv
 import traceback
@@ -38,17 +40,25 @@ intents.message_content = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 bot.remove_command('help')
 
+# ---------- GLOBAL ERROR HANDLER ----------
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandOnCooldown):
+        await ctx.send(f"⏳ This command is on cooldown. Try again in {error.retry_after:.1f} seconds.")
+    elif isinstance(error, HTTPException):
+        print(f"HTTPException: {error}")
+    elif isinstance(error, Forbidden):
+        print(f"Forbidden: {error}")
+    elif isinstance(error, DiscordServerError):
+        print(f"DiscordServerError: {error}")
+    else:
+        print(f"Unexpected error: {error}")
+
 # ---------- SYNC COMMANDS ON READY ----------
 @bot.event
 async def on_ready():
     print(f"✅ Logged in as {bot.user}")
     await bot.tree.sync()
-
-# ---------- BASIC ERROR LOGGER ----------
-@bot.event
-async def on_error(event, *args, **kwargs):
-    print(f"⚠️ An error occurred in event: {event}")
-    traceback.print_exc()
 
 # ---------- CHANNEL WELCOME EMBED ----------
 @bot.event
@@ -68,14 +78,16 @@ async def on_guild_channel_create(channel: discord.TextChannel):
                     f"- :credit_card: `/payment_method`: View available payment methods.\n"
                     f"- :moneybag: `/payc4lypso`: Get payment details for Admin C4Lypso.\n"
                     f"- :moneybag: `/paygojo`: Get payment details for Admin GOJO.\n\n"
-                    "Feel free to use any of the commands to get more information or navigate our support! Thank you for shopping with us!"
+                    "Feel free to use any of the commands to get more information or navigate our support!"
                 ),
                 color=discord.Color.blue()
             )
             await channel.send(embed=embed)
 
 # ---------- SLASH COMMANDS ----------
+
 @bot.tree.command(name='myhelp', description=':clipboard: Displays a list of available commands')
+@cooldown(rate=1, per=10, type=BucketType.user)
 async def myhelp(interaction: discord.Interaction):
     await interaction.response.defer()
     embed = discord.Embed(title=":clipboard: Bot Commands", description="List of available commands:", color=discord.Color.blue())
@@ -88,16 +100,18 @@ async def myhelp(interaction: discord.Interaction):
     await interaction.followup.send(embed=embed)
 
 @bot.tree.command(name='payment_method', description=':credit_card: View available payment methods')
+@cooldown(rate=1, per=10, type=BucketType.user)
 async def payment_method(interaction: discord.Interaction):
     await interaction.response.defer()
     embed = discord.Embed(title=":credit_card: Available Payment Methods", description="Choose your preferred payment method:", color=discord.Color.green())
     embed.add_field(name=":large_orange_diamond: Binance", value="Secure cryptocurrency exchange.", inline=False)
     embed.add_field(name=":mobile_phone: Nagad", value="Mobile financial service for easy transactions.", inline=False)
     embed.add_field(name=":mobile_phone: Bkash", value="Convenient payment option via mobile.", inline=False)
-    embed.add_field(name=":link: LTC", value="Litecoin address for payments: `LPaKyThv5EkZQvy6wEL3ynaJ48g7edvydH`", inline=False)
+    embed.add_field(name=":link: LTC", value="Litecoin address for payments: `LVo4KawK8EUJS8o42MFCfcL2VwjK671UYt`", inline=False)
     await interaction.followup.send(embed=embed)
 
 @bot.tree.command(name='payc4lypso', description=':moneybag: View payment details for Admin C4Lypso')
+@cooldown(rate=1, per=10, type=BucketType.user)
 async def payc4lypso(interaction: discord.Interaction):
     await interaction.response.defer()
     embed = discord.Embed(title=":moneybag: Payment Details - Admin C4Lypso", color=discord.Color.gold())
@@ -107,6 +121,7 @@ async def payc4lypso(interaction: discord.Interaction):
     await interaction.followup.send(embed=embed)
 
 @bot.tree.command(name='paygojo', description=':moneybag: View payment details for Admin GOJO')
+@cooldown(rate=1, per=10, type=BucketType.user)
 async def paygojo(interaction: discord.Interaction):
     await interaction.response.defer()
     embed = discord.Embed(title=":moneybag: Payment Details - Admin GOJO", color=discord.Color.gold())
@@ -117,11 +132,13 @@ async def paygojo(interaction: discord.Interaction):
     await interaction.followup.send(embed=embed)
 
 @bot.tree.command(name='view_account', description=':bust_in_silhouette: Check your verification status')
+@cooldown(rate=1, per=10, type=BucketType.user)
 async def view_account(interaction: discord.Interaction):
     await interaction.response.defer()
     await interaction.followup.send(f":white_check_mark: **{interaction.user.name}** is verified!")
 
 @bot.tree.command(name='refresh_commands', description=':arrows_counterclockwise: Refresh bot commands')
+@cooldown(rate=1, per=10, type=BucketType.user)
 async def refresh_commands(interaction: discord.Interaction):
     await interaction.response.defer()
     await bot.tree.sync()
