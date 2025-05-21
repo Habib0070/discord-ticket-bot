@@ -16,6 +16,10 @@ app = Flask(__name__)
 def home():
     return "✅ Bot is running!"
 
+@app.route('/health')
+def health():
+    return "OK", 200  # Lightweight route for UptimeRobot pings
+
 def run():
     app.run(host='0.0.0.0', port=8080)
 
