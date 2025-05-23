@@ -1,0 +1,23 @@
+name: Monitor and Redeploy Bot
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'  # every 10 minutes
+  workflow_dispatch:        # manual run support
+
+jobs:
+  check-health:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check bot health
+        id: health
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://discord-ticket-bot-7slh.onrender.com/health)
+          echo "Health check returned status $STATUS"
+          echo "::set-output name=status::$STATUS"
+
+      - name: Trigger redeploy if unhealthy
+        if: steps.health.outputs.status != '200'
+        run: |
+          curl -X POST "https://api.render.com/deploy/srv-d0ln3kpr0fns738hc7h0?key=u7CE4UOPCag"
