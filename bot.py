@@ -89,11 +89,13 @@ async def on_guild_channel_create(channel: discord.TextChannel):
                 ),
                 color=discord.Color.blue()
             )
-            await channel.send(embed=embed)
+            try:
+                await channel.send(embed=embed)
+            except Exception as e:
+                print(f"Embed send error: {e}")
             break
 
 # ---------- SLASH COMMANDS ----------
-
 @bot.tree.command(name="myhelp", description="📋 List of available commands")
 @cooldown(1, 10, BucketType.user)
 async def myhelp(interaction: discord.Interaction):
