@@ -117,7 +117,7 @@ async def payment_method(interaction: discord.Interaction):
     embed.add_field(name="🔶 Binance", value="Secure cryptocurrency exchange.", inline=False)
     embed.add_field(name="📱 Nagad", value="Mobile Payment Method.", inline=False)
     embed.add_field(name="📱 Bkash", value="Mobile Payment Method.", inline=False)
-    embed.add_field(name="🔗 LTC", value="Litecoin address for payments: `LPaKyThv5EkZQvy6wEL3ynaJ48g7edvydH`", inline=False)
+    embed.add_field(name="🔗 LTC", value="Litecoin Cryptocurrency For Payments.", inline=False)
     embed.add_field(name="🏦 Bank Transfer", value="Suitable For Bank Payment.", inline=False)
     await safe_followup_send(interaction, embed=embed)
 
@@ -137,11 +137,11 @@ async def payc4lypso(interaction: discord.Interaction):
 async def paygojo(interaction: discord.Interaction):
     await interaction.response.defer()
     embed = discord.Embed(title="💰 Payment Details - Admin GOJO", color=discord.Color.gold())
-    embed.add_field(name="🔶 Binance ID", value="962123136", inline=False)
-    embed.add_field(name="📱 Nagad Number(Send Money)", value="01742-208442", inline=False)
     embed.add_field(name="📱 Bkash Number(Send Money)", value="01742-208442", inline=False)
-    embed.add_field(name="🔗 LTC Address", value="LPaKyThv5EkZQvy6wEL3ynaJ48g7edvydH", inline=False)
+    embed.add_field(name="📱 Nagad Number(Send Money)", value="01742-208442", inline=False)
     embed.add_field(name="🏦 Bank Transfer", value="**Bank:** United Commercial Bank PLC [ UCB ]\n**Account Name:** MD SHIPON\n**Account Number:** 7863241001001764\n**Branch:** Joydebpur Branch", inline=False)
+    embed.add_field(name="🔶 Binance ID", value="962123136", inline=False)
+    embed.add_field(name="🔗 LTC Address", value="LPaKyThv5EkZQvy6wEL3ynaJ48g7edvydH", inline=False)
     await safe_followup_send(interaction, embed=embed)
 
 @bot.tree.command(name="view_account", description="👤 Check your verification status")
