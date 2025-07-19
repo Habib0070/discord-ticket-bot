@@ -126,9 +126,9 @@ async def payment_method(interaction: discord.Interaction):
 async def payc4lypso(interaction: discord.Interaction):
     await interaction.response.defer()
     embed = discord.Embed(title="💰 Payment Details - Admin C4Lypso", color=discord.Color.gold())
-    embed.add_field(name="🔶 Binance ID", value="947740594", inline=False)
-    embed.add_field(name="📱 Nagad Number(Send Money)", value="01795-395747", inline=False)
     embed.add_field(name="📱 Bkash Number(Send Money)", value="01795-395747", inline=False)
+    embed.add_field(name="📱 Nagad Number(Send Money)", value="01795-395747", inline=False)   
+    embed.add_field(name="🔶 Binance ID", value="947740594", inline=False)
     
     await safe_followup_send(interaction, embed=embed)
 
