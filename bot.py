@@ -84,8 +84,8 @@ async def on_guild_channel_create(channel: discord.TextChannel):
                     "**You can use these commands:**\n"
                     "📋 `/myhelp` - List all commands\n"
                     "💳 `/payment_method` - See available methods\n"
-                    "💰 `/payc4lypso` - Admin C4Lypso’s info\n"
-                    "💰 `/paygojo` - Admin GOJO’s info"
+                    "💰 `/payc4lypso` - Admin C4Lypso's info\n"
+                    "💰 `/paygojo` - Admin GOJO's info"
                 ),
                 color=discord.Color.blue()
             )
@@ -115,30 +115,33 @@ async def payment_method(interaction: discord.Interaction):
     await interaction.response.defer()
     embed = discord.Embed(title="💳 Available Payment Methods", description="Choose your preferred payment method:", color=discord.Color.green())
     embed.add_field(name="🔶 Binance", value="Secure cryptocurrency exchange.", inline=False)
-    embed.add_field(name="📱 Nagad", value="Mobile financial service for easy transactions.", inline=False)
-    embed.add_field(name="📱 Bkash", value="Convenient payment option via mobile.", inline=False)
+    embed.add_field(name="📱 Nagad", value="Mobile Payment Method.", inline=False)
+    embed.add_field(name="📱 Bkash", value="Mobile Payment Method.", inline=False)
     embed.add_field(name="🔗 LTC", value="Litecoin address for payments: `LPaKyThv5EkZQvy6wEL3ynaJ48g7edvydH`", inline=False)
+    embed.add_field(name="🏦 Bank Transfer", value="Suitable For Bank Payment.", inline=False)
     await safe_followup_send(interaction, embed=embed)
 
-@bot.tree.command(name="payc4lypso", description="💰 View Admin C4Lypso’s payment details")
+@bot.tree.command(name="payc4lypso", description="💰 View Admin C4Lypso's payment details")
 @cooldown(1, 10, BucketType.user)
 async def payc4lypso(interaction: discord.Interaction):
     await interaction.response.defer()
     embed = discord.Embed(title="💰 Payment Details - Admin C4Lypso", color=discord.Color.gold())
     embed.add_field(name="🔶 Binance ID", value="947740594", inline=False)
-    embed.add_field(name="📱 Nagad Number", value="01795-395747", inline=False)
-    embed.add_field(name="📱 Bkash Number", value="01795-395747", inline=False)
+    embed.add_field(name="📱 Nagad Number(Send Money)", value="01795-395747", inline=False)
+    embed.add_field(name="📱 Bkash Number(Send Money)", value="01795-395747", inline=False)
+    
     await safe_followup_send(interaction, embed=embed)
 
-@bot.tree.command(name="paygojo", description="💰 View Admin GOJO’s payment details")
+@bot.tree.command(name="paygojo", description="💰 View Admin GOJO's payment details")
 @cooldown(1, 10, BucketType.user)
 async def paygojo(interaction: discord.Interaction):
     await interaction.response.defer()
     embed = discord.Embed(title="💰 Payment Details - Admin GOJO", color=discord.Color.gold())
     embed.add_field(name="🔶 Binance ID", value="962123136", inline=False)
-    embed.add_field(name="📱 Nagad Number", value="01742208442", inline=False)
-    embed.add_field(name="📱 Bkash Number", value="01742208442", inline=False)
+    embed.add_field(name="📱 Nagad Number(Send Money)", value="01742-208442", inline=False)
+    embed.add_field(name="📱 Bkash Number(Send Money)", value="01742-208442", inline=False)
     embed.add_field(name="🔗 LTC Address", value="LPaKyThv5EkZQvy6wEL3ynaJ48g7edvydH", inline=False)
+    embed.add_field(name="🏦 Bank Transfer", value="**Bank:** United Commercial Bank PLC [ UCB ]\n**Account Name:** MD SHIPON\n**Account Number:** 7863241001001764\n**Branch:** Joydebpur Branch", inline=False)
     await safe_followup_send(interaction, embed=embed)
 
 @bot.tree.command(name="view_account", description="👤 Check your verification status")
