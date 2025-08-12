@@ -81,7 +81,7 @@ async def on_guild_channel_create(channel: discord.TextChannel):
                 description=(
                     "**Thank you for reaching out!**\n"
                     "One of our admins will assist you shortly.\n\n"
-                    "**You can use these commands:**\n"
+                    "** In the meantime you can use these commands for more informations!:**\n"
                     "📋 `/myhelp` - List all commands\n"
                     "💳 `/payment_method` - See available methods\n"
                     "💰 `/payc4lypso` - Admin C4Lypso's info\n"
