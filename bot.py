@@ -1,5 +1,4 @@
 import os
-import time
 import asyncio
 import aiohttp
 import discord
@@ -20,12 +19,10 @@ intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
 
-# ---------- GLOBAL HTTP SESSION WITH RETRY & BACKOFF ----------
+# ---------- RETRYING HTTP CLIENT ----------
 class RetryingClient:
-    def __init__(self, max_retries=3, base_backoff=1.0):
-        proxy = os.getenv('HTTP_PROXY')  # optional free proxy
-        connector = aiohttp.TCPConnector()
-        self.session = aiohttp.ClientSession(connector=connector, trust_env=True)
+    def __init__(self, session, max_retries=3, base_backoff=1.0):
+        self.session = session
         self.max_retries = max_retries
         self.base_backoff = base_backoff
 
@@ -39,15 +36,8 @@ class RetryingClient:
             await asyncio.sleep(backoff)
         raise HTTPException(f"Rate limited after {self.max_retries} retries")
 
-retry_client = RetryingClient()
-# Monkey-patch discord.py HTTP to use our session
-discord.http.HTTPClient.__init__ = lambda self, *args, **kwargs: setattr(self, 'session', retry_client.session)
-
-bot = commands.Bot(command_prefix="!", intents=intents)
-bot.remove_command("help")
-
-# ---------- EMBED BUILDERS + CACHE ----------
-@lru_cache(maxsize=10)
+# Build embeds with caching
+@lru_cache(maxsize=1)
 def build_help_embed():
     e = discord.Embed(title="📋 Bot Commands", color=discord.Color.red())
     e.add_field(name="🔒 /auth", value="Verify your identity", inline=False)
@@ -57,7 +47,7 @@ def build_help_embed():
     e.add_field(name="💰 /paygojo", value="Admin GOJO info", inline=False)
     return e
 
-@lru_cache(maxsize=10)
+@lru_cache(maxsize=1)
 def build_methods_embed():
     e = discord.Embed(title="💳 Available Payment Methods", color=discord.Color.green())
     e.add_field(name="🔶 Binance", value="Cryptocurrency exchange", inline=False)
@@ -67,7 +57,16 @@ def build_methods_embed():
     e.add_field(name="🏦 Bank Transfer", value="Bank payments", inline=False)
     return e
 
-# ---------- ERROR HANDLER ----------
+async def health(request):
+    return web.Response(text="✅ Bot is connected", status=200)
+
+app = web.Application()
+app.add_routes([web.get('/', health), web.get('/health', health)])
+runner = web.AppRunner(app)
+
+bot = commands.Bot(command_prefix="!", intents=intents)
+bot.remove_command("help")
+
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
@@ -77,7 +76,6 @@ async def on_command_error(ctx, error):
     else:
         print(f"Unhandled Error: {error}")
 
-# ---------- ON READY ----------
 @bot.event
 async def on_ready():
     print(f"✅ Logged in as {bot.user}")
@@ -87,7 +85,6 @@ async def on_ready():
     except Exception as e:
         print(f"❌ Sync failed: {e}")
 
-# ---------- SLASH COMMANDS ----------
 @bot.tree.command(name="myhelp", description="📋 List of available commands")
 @cooldown(1, 10, BucketType.user)
 async def myhelp(interaction: discord.Interaction):
@@ -120,7 +117,8 @@ async def paygojo(interaction: discord.Interaction):
     embed.add_field(name="📱 Nagad", value="01742-208442", inline=False)
     embed.add_field(
         name="🏦 Bank Transfer",
-        value="**Bank:** United Commercial Bank PLC\n**Account Name:** MD SHIPON\n**Account Number:** 7863241001001764\n**Branch:** Joydebpur",
+        value="**Bank:** United Commercial Bank PLC\n**Account Name:** MD SHIPON\n"
+              "**Account Number:** 7863241001001764\n**Branch:** Joydebpur",
         inline=False
     )
     embed.add_field(name="🔶 Binance ID", value="962123136", inline=False)
@@ -140,22 +138,22 @@ async def refresh_commands(interaction: discord.Interaction):
     await bot.tree.sync()
     await interaction.followup.send("✅ Slash commands synced!")
 
-# ---------- HEALTH ENDPOINT FOR UPTIMEROBO T----------
-async def health(request):
-    return web.Response(text="✅ Bot is connected", status=200)
-
-app = web.Application()
-app.add_routes([web.get('/', health), web.get('/health', health)])
-runner = web.AppRunner(app)
-
 async def start_web():
     await runner.setup()
     site = web.TCPSite(runner, '0.0.0.0', int(os.getenv('PORT', 8080)))
     await site.start()
 
-# ---------- RUN BOT + WEB SERVER ----------
 async def main():
+    # 1) start HTTP health server for UptimeRobot
     await start_web()
+
+    # 2) create aiohttp session and retrying client
+    session = aiohttp.ClientSession(trust_env=True)
+    retry_client = RetryingClient(session)
+    # monkey-patch discord HTTPClient to use our session
+    discord.http.HTTPClient.__init__ = lambda self, *args, **kwargs: setattr(self, 'session', retry_client.session)
+
+    # 3) start the bot
     await bot.start(TOKEN)
 
 if __name__ == '__main__':
