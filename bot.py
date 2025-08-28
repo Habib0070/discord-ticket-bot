@@ -130,6 +130,7 @@ async def payc4lypso(interaction: discord.Interaction):
     embed.add_field(name="📱 Nagad Number(Send Money)", value="01795-395747", inline=False)   
     embed.add_field(name="🔶 Binance ID", value="947740594", inline=False)
     embed.add_field(name="🔗 LTC Address", value="LVgpkadPDQpnHDW4xDR587RjS4KVwRsSTE", inline=False)
+    embed.add_field(name="🔗 TRX Address(TRC20)", value="TNa1tJmTx8X9g4XkSnZvaD3MPKiezVYbDQ", inline=False)
     
     await safe_followup_send(interaction, embed=embed)
 
